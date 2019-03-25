@@ -8,6 +8,9 @@ Making evaluation maps is the most time consuming part of a Geodesign study, usi
 * Industrial (IND)
 * Forests (FOR)
 * Hydrology (HYDRO)
+* Energy Infrastructure (EI)
+* Low Density Housing (LDH)
+* Mixed Use (MIX)
 
 Find out more about evaluation maps at the [Making Evaluations Maps](https://community.geodesignhub.com/t/making-evaluation-maps/62) in our community page. 
 
