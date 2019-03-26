@@ -86,27 +86,27 @@ class EvaluationBuilder():
 		self.clippedFile = 0
 		self.colorDict = {'red':self.redFeatures, 'yellow':self.yellowFeatures, 'green':self.greenFeatures}
 		self.addedFeatures = []
-	def processFile(self, color, corinefile,corinecodes):
+	def processFile(self, color, uafile,corinecodes):
 		curfeatures = self.colorDict[color]
 		cwd = os.getcwd()
 		
-		corinefile = os.path.join(cwd,config.settings['workingdirectory'], corinefile)
-		with fiona.open(corinefile, driver="GPKG") as source:
+		uafile = os.path.join(cwd,config.settings['workingdirectory'], uafile)
+		with fiona.open(uafile, driver="GPKG") as source:
 			for feature in source: 
 				try: 
-					if int(feature['properties']['code_12']) in corinecodes:
+					if int(feature['properties']['CODE2012']) in corinecodes:
 						curfeatures.append(feature)	
-						self.addedFeatures.append(int(feature['properties']['OBJECTID']))
+						self.addedFeatures.append(int(feature['properties']['fid']))
 				except KeyError as ke:
 					pass
 		self.colorDict[color] = curfeatures
 
-	def unAddedAsYellow(self,corinefile):
+	def unAddedAsYellow(self,uafile):
 		cwd = os.getcwd()
-		corinefile = os.path.join(cwd,config.settings['workingdirectory'], corinefile)
-		with fiona.open(corinefile) as source:
+		uafile = os.path.join(cwd,config.settings['workingdirectory'], uafile)
+		with fiona.open(uafile) as source:
 			for feature in source: 
-				if int(feature['properties']['OBJECTID']) in self.addedFeatures:
+				if int(feature['properties']['fid']) in self.addedFeatures:
 					pass
 				else:
 					self.colorDict['yellow'].append(feature)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 	corinedataurl = config.settings['corinedata']
 	systems = config.settings['systems']
 	aoifile = config.settings['aoifile']
-	corinefile = os.path.join(os.getcwd(), config.settings['workingdirectory'], corinedataurl)
+	uafile = os.path.join(os.getcwd(), config.settings['workingdirectory'], corinedataurl)
 	myFileDownloader = DataDownloader()
 	aoifile = myFileDownloader.downloadAOIFile([aoifile])
 	regex = re.compile(
@@ -165,9 +165,9 @@ if __name__ == '__main__':
 
 	myFileDownloader = DataDownloader()
 	if isURL: 
-		corinefile = myFileDownloader.downloadFiles([corinedataurl])[0]
+		uafile = myFileDownloader.downloadFiles([corinedataurl])[0]
 	else: 
-		corinefile = myFileDownloader.readFile(corinedataurl)[0]
+		uafile = myFileDownloader.readFile(corinedataurl)[0]
 
 
 	# for system, processchain in config.processchains.iteritems():
@@ -176,8 +176,8 @@ if __name__ == '__main__':
 		print("Processing %s .." % system)
 		myEvaluationBuilder = EvaluationBuilder(system)
 		for evaluationcolor, corinecodes in processchain.items():
-			myEvaluationBuilder.processFile(evaluationcolor,corinefile,corinecodes)
-		myEvaluationBuilder.unAddedAsYellow(corinefile)
+			myEvaluationBuilder.processFile(evaluationcolor,uafile,corinecodes)
+		myEvaluationBuilder.unAddedAsYellow(uafile)
 
 		myEvaluationBuilder.writeEvaluationFile()
 
