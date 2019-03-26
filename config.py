@@ -1,10 +1,10 @@
 settings = {
 
-    "aoifile": "https://gdh-data.ams3.digitaloceanspaces.com/boundaries/camkox-purple.geojson",
+    "aoifile": "leppavaaraa-sa.geojson",
     "systems": ["URB","AG","IND","FOR","HYDRO","EI","LDH","MIX"],
     "outputdirectory": "output",
     "workingdirectory": "working",
-    "corinedata": "CORINE-lc.zip",
+    "corinedata": "UA-Finland.gpkg",
 }
 
 

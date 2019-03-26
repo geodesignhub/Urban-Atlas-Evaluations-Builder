@@ -86,7 +86,7 @@ class EvaluationBuilder():
 		self.clippedFile = 0
 		self.colorDict = {'red':self.redFeatures, 'yellow':self.yellowFeatures, 'green':self.greenFeatures}
 		self.addedFeatures = []
-	def processFile(self, color, uafile,corinecodes):
+	def processFile(self, color, uafile,uacodes):
 		curfeatures = self.colorDict[color]
 		cwd = os.getcwd()
 		
@@ -94,9 +94,9 @@ class EvaluationBuilder():
 		with fiona.open(uafile, driver="GPKG") as source:
 			for feature in source: 
 				try: 
-					if int(feature['properties']['CODE2012']) in corinecodes:
+					if int(feature['properties']['CODE2012']) in uacodes:
 						curfeatures.append(feature)	
-						self.addedFeatures.append(int(feature['properties']['fid']))
+						self.addedFeatures.append(int(feature['properties']['OBJECTID']))
 				except KeyError as ke:
 					pass
 		self.colorDict[color] = curfeatures
@@ -106,7 +106,7 @@ class EvaluationBuilder():
 		uafile = os.path.join(cwd,config.settings['workingdirectory'], uafile)
 		with fiona.open(uafile) as source:
 			for feature in source: 
-				if int(feature['properties']['fid']) in self.addedFeatures:
+				if int(feature['properties']['OBJECTID']) in self.addedFeatures:
 					pass
 				else:
 					self.colorDict['yellow'].append(feature)
@@ -175,8 +175,8 @@ if __name__ == '__main__':
 		processchain = config.processchains[system]
 		print("Processing %s .." % system)
 		myEvaluationBuilder = EvaluationBuilder(system)
-		for evaluationcolor, corinecodes in processchain.items():
-			myEvaluationBuilder.processFile(evaluationcolor,uafile,corinecodes)
+		for evaluationcolor, uacodes in processchain.items():
+			myEvaluationBuilder.processFile(evaluationcolor,uafile,uacodes)
 		myEvaluationBuilder.unAddedAsYellow(uafile)
 
 		myEvaluationBuilder.writeEvaluationFile()
