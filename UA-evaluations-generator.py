@@ -94,7 +94,7 @@ class EvaluationBuilder():
 		with fiona.open(uafile, driver="GPKG") as source:
 			for feature in source: 
 				try: 
-					if int(feature['properties']['CODE2012']) in uacodes:
+					if int(feature['properties']['code_2018']) in uacodes:
 						curfeatures.append(feature)	
 						self.addedFeatures.append(int(feature['properties']['OBJECTID']))
 				except KeyError as ke:
